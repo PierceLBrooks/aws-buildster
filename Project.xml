@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buildster directory="../build" distribution="../Distribution">
+  <project directory="../Project">
+    <dependencies>
+      <dependency>
+        <label>psl</label>
+        <subpath>build</subpath>
+        <remote>
+          <url>https://github.com/PierceLBrooks/libpsl.git</url>
+          <git_repo>
+            <branch>master</branch>
+            <credentials>
+              <username>username</username>
+              <password>password</password>
+            </credentials>
+          </git_repo>
+        </remote>
+        <build>
+          <arguments></arguments>
+          <cmake>
+            <generator>
+              <switch id="BUILDSTER_OS">
+                <case check="Windows">MinGW Makefiles</case>
+                <case check="Linux">Unix Makefiles</case>
+                <case check="Darwin">Xcode</case>
+                <default><quit></quit></default>
+              </switch>
+            </generator>
+            <source>..</source>
+          </cmake>
+        </build>
+        <exports>
+          <export type="all">
+            <key>LIBPSL_ROOT</key>
+            <value><install></install></value>
+          </export>
+          <export type="headers">
+            <key>LIBPSL_INCLUDE_DIR</key>
+            <value><install></install>/include</value>
+          </export>
+          <export type="libraries">
+            <key>LIBPSL_LIBRARIES</key>
+            <value><install></install>/lib</value>
+          </export>
+        </exports>
+        <imports></imports>
+      </dependency>
+      <dependency>
+        <label>curl</label>
+        <subpath>build</subpath>
+        <remote>
+          <url>https://github.com/curl/curl.git</url>
+          <git_repo>
+            <branch>curl-7_86_0</branch>
+            <credentials>
+              <username>username</username>
+              <password>password</password>
+            </credentials>
+          </git_repo>
+        </remote>
+        <build>
+          <arguments>
+            <argument>-DCURL_USE_OPENSSL=ON</argument>
+            <!--<argument>-DCURL_USE_LIBPSL=OFF</argument>-->
+          </arguments>
+          <cmake>
+            <generator>
+              <switch id="BUILDSTER_OS">
+                <case check="Windows">MinGW Makefiles</case>
+                <case check="Linux">Unix Makefiles</case>
+                <case check="Darwin">Xcode</case>
+                <default><quit></quit></default>
+              </switch>
+            </generator>
+            <source>..</source>
+          </cmake>
+        </build>
+        <exports>
+          <export type="all">
+            <key>CURL_ROOT</key>
+            <value><install></install></value>
+          </export>
+          <export type="headers">
+            <key>CURL_INCLUDE_DIR</key>
+            <value><install></install>/include</value>
+          </export>
+          <export type="libraries">
+            <key>CURL_LIBRARIES</key>
+            <value><install></install>/lib</value>
+          </export>
+        </exports>
+        <imports>
+          <import>psl</import>
+        </imports>
+      </dependency>
+      <dependency>
+        <label>aws</label>
+        <subpath>build</subpath>
+        <remote>
+          <url>https://github.com/aws/aws-sdk-cpp.git</url>
+          <git_repo>
+            <branch>1.10.26</branch>
+            <credentials>
+              <username>username</username>
+              <password>password</password>
+            </credentials>
+          </git_repo>
+        </remote>
+        <build>
+          <arguments></arguments>
+          <cmake>
+            <generator>
+              <switch id="BUILDSTER_OS">
+                <case check="Windows">MinGW Makefiles</case>
+                <case check="Linux">Unix Makefiles</case>
+                <case check="Darwin">Xcode</case>
+                <default><quit></quit></default>
+              </switch>
+            </generator>
+            <source>..</source>
+          </cmake>
+        </build>
+        <exports>
+          <export type="all">
+            <key>AWS_ROOT</key>
+            <value><install></install></value>
+          </export>
+          <export type="headers">
+            <key>AWS_INCLUDE_DIR</key>
+            <value><install></install>/include</value>
+          </export>
+          <export type="libraries">
+            <key>AWS_LIBRARIES</key>
+            <value><install></install>/lib</value>
+          </export>
+        </exports>
+        <imports>
+          <import>psl</import>
+          <import>curl</import>
+        </imports>
+      </dependency>
+    </dependencies>
+    <targets>
+      <target type="executable">
+        <label>example</label>
+        <generator>
+          <switch id="BUILDSTER_OS">
+            <case check="Windows">MinGW Makefiles</case>
+            <case check="Linux">Unix Makefiles</case>
+            <case check="Darwin">Xcode</case>
+            <default><quit></quit></default>
+          </switch>
+        </generator>
+        <definitions></definitions>
+        <links>
+          <link>aws*</link>
+          <link>curl*</link>
+          <if_check id="BUILDSTER_OS" check="Windows">
+            <link>setupapi</link>
+            <link>iphlpapi</link>
+            <link>psapi</link>
+            <link>userenv</link>
+            <link>gdi32</link>
+            <link>crypt32</link>
+            <link>ws2_32</link>
+          </if_check>
+        </links>
+        <imports>
+          <import>psl</import>
+          <import>curl</import>
+          <import>aws</import>
+        </imports>
+      </target>
+    </targets>
+  </project>
+</buildster>
