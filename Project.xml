@@ -1,7 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<buildster directory="../build" distribution="../Distribution">
+<buildster directory="build" distribution="../Distribution">
   <project directory="../Project">
     <dependencies>
+      <dependency>
+        <label>openssl</label>
+        <subpath>build</subpath>
+        <remote>
+          <url>https://github.com/PierceLBrooks/openssl-cmake.git</url>
+          <git_repo>
+            <branch>1.1.1g-20200510</branch>
+            <credentials>
+              <username>username</username>
+              <password>password</password>
+            </credentials>
+          </git_repo>
+        </remote>
+        <build>
+          <arguments></arguments>
+          <cmake>
+            <generator>
+              <switch id="BUILDSTER_OS">
+                <case check="Windows">MinGW Makefiles</case>
+                <case check="Linux">Unix Makefiles</case>
+                <case check="Darwin">Xcode</case>
+                <default><quit></quit></default>
+              </switch>
+            </generator>
+            <source>..</source>
+          </cmake>
+        </build>
+        <exports>
+          <export type="all">
+            <key>OPENSSL_ROOT_DIR</key>
+            <value><install></install></value>
+          </export>
+          <export type="headers">
+            <key>OPENSSL_INCLUDE_DIR</key>
+            <value><install></install>/include</value>
+          </export>
+          <export type="libraries">
+            <key>OPENSSL_LIBRARIES</key>
+            <value><install></install>/lib</value>
+          </export>
+        </exports>
+        <imports></imports>
+      </dependency>
       <dependency>
         <label>psl</label>
         <subpath>build</subpath>
@@ -31,15 +74,15 @@
         </build>
         <exports>
           <export type="all">
-            <key>LIBPSL_ROOT</key>
+            <key>LibPSL_ROOT</key>
             <value><install></install></value>
           </export>
           <export type="headers">
-            <key>LIBPSL_INCLUDE_DIR</key>
+            <key>LibPSL_INCLUDE_DIR</key>
             <value><install></install>/include</value>
           </export>
           <export type="libraries">
-            <key>LIBPSL_LIBRARIES</key>
+            <key>LibPSL_LIBRARIES</key>
             <value><install></install>/lib</value>
           </export>
         </exports>
@@ -61,7 +104,6 @@
         <build>
           <arguments>
             <argument>-DCURL_USE_OPENSSL=ON</argument>
-            <!--<argument>-DCURL_USE_LIBPSL=OFF</argument>-->
           </arguments>
           <cmake>
             <generator>
@@ -85,11 +127,12 @@
             <value><install></install>/include</value>
           </export>
           <export type="libraries">
-            <key>CURL_LIBRARIES</key>
+            <key>CURL_LIBRARIES_DIR</key>
             <value><install></install>/lib</value>
           </export>
         </exports>
         <imports>
+          <import>openssl</import>
           <import>psl</import>
         </imports>
       </dependency>
@@ -107,7 +150,10 @@
           </git_repo>
         </remote>
         <build>
-          <arguments></arguments>
+          <arguments>
+            <argument>-DENABLE_TESTING=OFF</argument>
+            <argument>-DBUILD_ONLY=s3</argument>
+          </arguments>
           <cmake>
             <generator>
               <switch id="BUILDSTER_OS">
@@ -130,11 +176,12 @@
             <value><install></install>/include</value>
           </export>
           <export type="libraries">
-            <key>AWS_LIBRARIES</key>
+            <key>AWS_LIBRARIES_DIR</key>
             <value><install></install>/lib</value>
           </export>
         </exports>
         <imports>
+          <import>openssl</import>
           <import>psl</import>
           <import>curl</import>
         </imports>
@@ -166,6 +213,7 @@
           </if_check>
         </links>
         <imports>
+          <import>openssl</import>
           <import>psl</import>
           <import>curl</import>
           <import>aws</import>
